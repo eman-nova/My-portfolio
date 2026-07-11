@@ -130,26 +130,163 @@ section{padding:7rem 3rem;position:relative}
 .tp.blue:hover{background:rgba(79,142,247,.1);border-color:var(--blue)}
 
 /* ── Projects ── */
-#projects{background:var(--bg)}
-.proj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:1.4rem}
-.proj-card{background:var(--bg3);border:1px solid var(--border);border-radius:20px;overflow:hidden;transition:all .35s var(--ease)}
-.proj-card:hover{transform:translateY(-6px);box-shadow:0 24px 60px rgba(0,0,0,.5);border-color:rgba(201,168,76,.26)}
-.proj-thumb{height:200px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
-.proj-thumb img{width:100%;height:100%;object-fit:cover;object-position:center top;transition:transform .5s var(--ease);filter:brightness(1.05) contrast(1.08) saturate(1.1)}
-.proj-card:hover .proj-thumb img{transform:scale(1.07)}
-.proj-thumb-fallback{height:100%;width:100%;display:flex;align-items:center;justify-content:center}
-.proj-num{font-family:'Playfair Display',serif;font-size:5.5rem;font-weight:900;opacity:.06;color:var(--gold);user-select:none;transition:opacity .3s}
-.proj-card:hover .proj-num{opacity:.14}
-.proj-badge{position:absolute;top:12px;right:12px;background:var(--gold);color:#04050a;font-size:10px;font-weight:700;letter-spacing:.1em;padding:4px 11px;border-radius:var(--r);text-transform:uppercase}
-.proj-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(4,5,10,.75) 0%,transparent 55%);pointer-events:none}
-.proj-body{padding:1.4rem}
-.proj-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;margin-bottom:6px;letter-spacing:-.01em}
-.proj-desc{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:1rem}
-.proj-stack{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1.2rem}
-.sp{font-size:11px;padding:3px 10px;border-radius:var(--r);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--muted)}
-.proj-links{display:flex;gap:9px}
-.pl{font-size:12px;color:var(--gold);text-decoration:none;border:1px solid rgba(201,168,76,.22);padding:7px 15px;border-radius:var(--r);letter-spacing:.06em;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
-.pl:hover{background:var(--gold-pale);border-color:var(--gold)}
+#projects{
+    background:var(--bg);
+}
+
+.proj-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(330px,1fr));
+    gap:1.5rem;
+}
+
+.proj-card{
+    background:var(--bg3);
+    border:1px solid var(--border);
+    border-radius:20px;
+    overflow:hidden;
+    transition:all .35s var(--ease);
+}
+
+.proj-card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 25px 60px rgba(0,0,0,.5);
+    border-color:rgba(201,168,76,.35);
+}
+
+/* ---------- Thumbnail ---------- */
+
+.proj-thumb{
+    position:relative;
+    width:100%;
+    height:250px;
+    overflow:hidden;
+    background:#111;
+}
+
+.proj-thumb img{
+    width:100%;
+    height:100%;
+    display:block;
+    object-fit:cover;
+    object-position:top center;
+    transition:transform .6s ease;
+}
+
+.proj-card:hover .proj-thumb img{
+    transform:scale(1.06);
+}
+
+.proj-overlay{
+    position:absolute;
+    inset:0;
+    background:linear-gradient(
+        to top,
+        rgba(4,5,10,.78),
+        rgba(4,5,10,.18),
+        transparent
+    );
+}
+
+.proj-badge{
+    position:absolute;
+    top:14px;
+    right:14px;
+    z-index:3;
+
+    background:var(--gold);
+    color:#04050a;
+
+    padding:8px 18px;
+    border-radius:999px;
+
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+}
+
+.proj-num{
+    position:absolute;
+    right:18px;
+    bottom:10px;
+
+    z-index:2;
+
+    font-family:"Playfair Display",serif;
+    font-size:5rem;
+    font-weight:900;
+
+    color:var(--gold);
+    opacity:.08;
+}
+
+/* ---------- Content ---------- */
+
+.proj-body{
+    padding:1.6rem;
+}
+
+.proj-title{
+    font-family:"Playfair Display",serif;
+    font-size:2rem;
+    font-weight:700;
+    color:#fff;
+    margin-bottom:.8rem;
+}
+
+.proj-desc{
+    font-size:1rem;
+    line-height:1.8;
+    color:rgba(240,237,230,.65);
+    margin-bottom:1.4rem;
+}
+
+.proj-stack{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-bottom:1.5rem;
+}
+
+.sp{
+    padding:7px 14px;
+    border-radius:999px;
+
+    border:1px solid rgba(255,255,255,.08);
+    background:rgba(255,255,255,.03);
+
+    color:rgba(240,237,230,.72);
+    font-size:.82rem;
+}
+
+.proj-links{
+    display:flex;
+    gap:12px;
+}
+
+.pl{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+
+    padding:10px 18px;
+
+    border-radius:999px;
+
+    text-decoration:none;
+
+    color:var(--gold);
+
+    border:1px solid rgba(201,168,76,.25);
+
+    transition:.3s;
+}
+
+.pl:hover{
+    background:var(--gold-pale);
+    border-color:var(--gold);
+}
 
 /* ── Experience ── */
 #experience{background:var(--bg2)}
@@ -387,7 +524,7 @@ footer em{color:var(--gold);font-style:normal}
         </div>
         <div class="proj-body">
           <div class="proj-title">GeeLux Jewellery</div>
-          <p class="proj-desc">A premiu luxury jewelry e-commerce platform featuring an animated hero, product showcase, cart system, and a seamless browsing experience built to convert browsers into buyers.</p>
+          <p class="proj-desc">A premium luxury jewelry e-commerce platform featuring an animated hero, product showcase, cart system, and a seamless browsing experience built to convert browsers into buyers.</p>
           <div class="proj-stack">
             <span class="sp">React.js</span><span class="sp">JavaScript</span><span class="sp">CSS3</span>
           </div>
@@ -406,11 +543,49 @@ footer em{color:var(--gold);font-style:normal}
 
     
 
-      <div class="proj-card reveal">
-        <div class="proj-thumb proj-thumb-fallback" style="background:linear-gradient(135deg,#1a0d10,#20101a)">
-          <div class="proj-num">03</div>
-          <span class="proj-badge">Personal Portfolio</span>
+    <div class="proj-card reveal">
+
+    <div class="proj-thumb">
+        <img src="./images/profile.jpg" alt="Emmanuel Portfolio">
+
+        <div class="proj-overlay"></div>
+
+        <div class="proj-num">03</div>
+
+        <span class="proj-badge">Personal Portfolio</span>
+    </div>
+
+    <div class="proj-body">
+
+        <h3 class="proj-title">Personal Portfolio</h3>
+
+        <p class="proj-desc">
+            A modern and responsive portfolio website showcasing my skills,
+            projects, experience, and contact information. Built with HTML,
+            CSS, and JavaScript with a premium user experience.
+        </p>
+
+        <div class="proj-stack">
+            <span class="sp">HTML5</span>
+            <span class="sp">CSS3</span>
+            <span class="sp">JavaScript</span>
         </div>
+
+        <div class="proj-links">
+
+            <a href="https://eman-nova.github.io/My-portfolio/" target="_blank" class="pl">
+                Live Demo
+            </a>
+
+            <a href="https://github.com/eman-nova/My-portfolio" target="_blank" class="pl">
+                GitHub
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
         <div class="proj-body">
           <div class="proj-title">Analytics Dashboard</div>
           <p class="proj-desc">A data visualisation dashboard with interactive charts, real-time KPI cards and advanced filtering — built with React and a Node.js backend.</p>
