@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notes App</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f2f5;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 280px;
+      background: #fff;
+      border-right: 1px solid #e0e0e0;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+
+    .sidebar-header {
+      padding: 20px 16px 12px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .sidebar-header h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 12px;
+    }
+
+    .new-btn {
+      width: 100%;
+      padding: 10px;
+      background: #4f46e5;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .new-btn:hover { background: #4338ca; }
+
+    .search-input {
+      margin-top: 10px;
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 13px;
+      outline: none;
+      background: #f7f7f7;
+    }
+
+    .search-input:focus { border-color: #4f46e5; background: #fff; }
+
+    /* Note list */
+    .note-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 0;
+    }
+
+    .note-item {
+      padding: 12px 16px;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: background 0.15s;
+    }
+
+    .note-item:hover { background: #f5f5f5; }
+
+    .note-item.active {
+      background: #eef2ff;
+      border-left-color: #4f46e5;
+    }
+
+    .note-item-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #111;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .note-item-preview {
+      font-size: 12px;
+      color: #888;
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .note-item-date {
+      font-size: 11px;
+      color: #bbb;
+      margin-top: 4px;
+    }
+
+    .no-notes {
+      padding: 20px 16px;
+      font-size: 13px;
+      color: #aaa;
+      text-align: center;
+    }
+
+    /* Editor */
+    .editor {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+    }
+
+    .editor-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .toolbar-left { display: flex; gap: 8px; }
+
+    .toolbar-btn {
+      padding: 6px 14px;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 13px;
+      color: #555;
+      background: #fafafa;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .toolbar-btn:hover { background: #eef2ff; border-color: #4f46e5; color: #4f46e5; }
+
+    .delete-btn {
+      padding: 6px 14px;
+      border: 1px solid #fecaca;
+      border-radius: 6px;
+      font-size: 13px;
+      color: #ef4444;
+      background: #fff5f5;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .delete-btn:hover { background: #ef4444; color: #fff; }
+
+    .editor-content {
+      flex: 1;
+      padding: 32px 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      overflow-y: auto;
+    }
+
+    .title-input {
+      font-size: 26px;
+      font-weight: 700;
+      color: #111;
+      border: none;
+      outline: none;
+      width: 100%;
+    }
+
+    .title-input::placeholder { color: #ccc; }
+
+    .body-input {
+      flex: 1;
+      font-size: 15px;
+      line-height: 1.7;
+      color: #333;
+      border: none;
+      outline: none;
+      resize: none;
+      width: 100%;
+      min-height: 400px;
+    }
+
+    .body-input::placeholder { color: #ccc; }
+
+    /* Empty state */
+    .empty-state {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #ccc;
+      gap: 8px;
+    }
+
+    .empty-state svg { opacity: 0.4; }
+    .empty-state p { font-size: 15px; }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h2>📝 Notes</h2>
+      <button class="new-btn" onclick="createNote()">+ New Note</button>
+      <input class="search-input" type="text" placeholder="Search notes..." oninput="renderList(this.value)" />
+    </div>
+    <div class="note-list" id="noteList"></div>
+  </div>
+
+  <!-- Editor -->
+  <div class="editor" id="editor">
+
+    <!-- Shown when a note is open -->
+    <div id="editorActive" style="display:none; flex:1; flex-direction:column;">
+      <div class="editor-toolbar">
+        <div class="toolbar-left">
+          <button class="toolbar-btn" onclick="copyNote()">Copy</button>
+          <button class="toolbar-btn" onclick="clearNote()">Clear</button>
+        </div>
+        <button class="delete-btn" onclick="deleteNote()">Delete</button>
+      </div>
+      <div class="editor-content">
+        <input class="title-input" id="titleInput" type="text" placeholder="Note title..."
+          oninput="saveNote()" />
+        <textarea class="body-input" id="bodyInput" placeholder="Start writing your note here..."
+          oninput="saveNote()"></textarea>
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <div class="empty-state" id="emptyState">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+      </svg>
+      <p>Select a note or create a new one</p>
+    </div>
+
+  </div>
+
+  <script>
+    let notes = JSON.parse(localStorage.getItem('portfolio_notes') || '[]');
+    let activeId = null;
+    let saveTimer = null;
+
+    // ── Init with sample note ──
+    if (notes.length === 0) {
+      notes.push({
+        id: Date.now().toString(),
+        title: 'Welcome!',
+        body: 'This is your notes app. Create, edit and delete notes easily.',
+        updated: Date.now()
+      });
+      persist();
+    }
+
+    function uid() {
+      return Date.now().toString(36) + Math.random().toString(36).slice(2);
+    }
+
+    function persist() {
+      localStorage.setItem('portfolio_notes', JSON.stringify(notes));
+    }
+
+    function fmtDate(ts) {
+      return new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    // ── Render sidebar list ──
+    function renderList(query = '') {
+      const list = document.getElementById('noteList');
+      const q = query.toLowerCase();
+
+      const filtered = notes
+        .filter(n => n.title.toLowerCase().includes(q) || n.body.toLowerCase().includes(q))
+        .sort((a, b) => b.updated - a.updated);
+
+      if (filtered.length === 0) {
+        list.innerHTML = '<p class="no-notes">No notes found.</p>';
+        return;
+      }
+
+      list.innerHTML = filtered.map(n => `
+        <div class="note-item ${n.id === activeId ? 'active' : ''}" onclick="openNote('${n.id}')">
+          <div class="note-item-title">${n.title || 'Untitled'}</div>
+          <div class="note-item-preview">${n.body || 'No content'}</div>
+          <div class="note-item-date">${fmtDate(n.updated)}</div>
+        </div>
+      `).join('');
+    }
+
+    // ── Open a note ──
+    function openNote(id) {
+      activeId = id;
+      const note = notes.find(n => n.id === id);
+      if (!note) return;
+
+      document.getElementById('titleInput').value = note.title;
+      document.getElementById('bodyInput').value = note.body;
+      document.getElementById('emptyState').style.display = 'none';
+      document.getElementById('editorActive').style.display = 'flex';
+
+      renderList(document.querySelector('.search-input').value);
+    }
+
+    // ── Create new note ──
+    function createNote() {
+      const note = { id: uid(), title: '', body: '', updated: Date.now() };
+      notes.unshift(note);
+      persist();
+      openNote(note.id);
+      document.getElementById('titleInput').focus();
+    }
+
+    // ── Auto-save ──
+    function saveNote() {
+      if (!activeId) return;
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => {
+        const note = notes.find(n => n.id === activeId);
+        if (!note) return;
+        note.title = document.getElementById('titleInput').value;
+        note.body  = document.getElementById('bodyInput').value;
+        note.updated = Date.now();
+        persist();
+        renderList(document.querySelector('.search-input').value);
+      }, 400);
+    }
+
+    // ── Delete note ──
+    function deleteNote() {
+      if (!activeId) return;
+      notes = notes.filter(n => n.id !== activeId);
+      persist();
+      activeId = null;
+      document.getElementById('editorActive').style.display = 'none';
+      document.getElementById('emptyState').style.display = 'flex';
+      renderList(document.querySelector('.search-input').value);
+    }
+
+    // ── Copy note ──
+    function copyNote() {
+      const title = document.getElementById('titleInput').value;
+      const body  = document.getElementById('bodyInput').value;
+      navigator.clipboard.writeText(`${title}\n\n${body}`);
+    }
+
+    // ── Clear note content ──
+    function clearNote() {
+      document.getElementById('titleInput').value = '';
+      document.getElementById('bodyInput').value = '';
+      saveNote();
+    }
+
+    // ── Boot ──
+    renderList();
+    openNote(notes[0].id);
+  </script>
+
+</body>
+</html>
